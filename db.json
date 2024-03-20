@@ -1,0 +1,142 @@
+{
+  "shoes": [
+    {
+      "id": "1",
+      "product_name": "Adidas Ultraboost",
+      "size": "34",
+      "price": "121"
+    },
+    {
+      "id": "2",
+      "product_name": "Nike Air Max",
+      "size": 38,
+      "price": 140
+    },
+    {
+      "id": "3",
+      "product_name": "Reebok Classic",
+      "size": 40,
+      "price": 90
+    },
+    {
+      "id": "4",
+      "product_name": "Puma Suede",
+      "size": 42,
+      "price": 80
+    },
+    {
+      "id": "5",
+      "product_name": "Vans Old Skool",
+      "size": 44,
+      "price": 65
+    },
+    {
+      "id": "6",
+      "product_name": "Converse Chuck Taylor",
+      "size": 36,
+      "price": 55
+    },
+    {
+      "id": "7",
+      "product_name": "New Balance 574",
+      "size": 38,
+      "price": 100
+    },
+    {
+      "id": "8",
+      "product_name": "Under Armour HOVR",
+      "size": 40,
+      "price": 110
+    },
+    {
+      "id": "9",
+      "product_name": "Salomon Speedcross",
+      "size": 42,
+      "price": 130
+    },
+    {
+      "id": "10",
+      "product_name": "Brooks Ghost",
+      "size": 44,
+      "price": 150
+    },
+    {
+      "id": "11",
+      "product_name": "Saucony Kinvara",
+      "size": 36,
+      "price": 95
+    },
+    {
+      "id": "12",
+      "product_name": "Mizuno Wave Rider",
+      "size": 38,
+      "price": 105
+    },
+    {
+      "id": "13",
+      "product_name": "ASICS Gel-Kayano",
+      "size": 40,
+      "price": 125
+    },
+    {
+      "id": "14",
+      "product_name": "Hoka One One Bondi",
+      "size": 42,
+      "price": 135
+    },
+    {
+      "id": "15",
+      "product_name": "Merrell Trail Glove",
+      "size": 44,
+      "price": 115
+    },
+    {
+      "id": "16",
+      "product_name": "Timberland Classic",
+      "size": 36,
+      "price": 95
+    },
+    {
+      "id": "17",
+      "product_name": "Dr. Martens 1460",
+      "size": 38,
+      "price": 160
+    },
+    {
+      "id": "18",
+      "product_name": "Timberland Earthkeepers",
+      "size": 40,
+      "price": 120
+    },
+    {
+      "id": "19",
+      "product_name": "Clarks Originals Desert Boot",
+      "size": 42,
+      "price": 80
+    },
+    {
+      "id": "20",
+      "product_name": "Birkenstock Arizona",
+      "size": 44,
+      "price": 90
+    },
+    {
+      "id": "d9da",
+      "product_name": "shoe1",
+      "size": "34",
+      "price": "100"
+    },
+    {
+      "id": "4b8f",
+      "product_name": "veryyyyyyyyyyyyyyyyyyyyy long shoe nameeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "size": "34",
+      "price": "2"
+    },
+    {
+      "id": "9031",
+      "product_name": "Platforms spring-summer-fall-winter collection 2022-2023",
+      "size": "36",
+      "price": "100"
+    }
+  ]
+}
