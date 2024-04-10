@@ -1,0 +1,14 @@
+[
+  {
+    "id": "2",
+    "product_name": "Nike Air Max",
+    "size": "40",
+    "price": 140
+  },
+  {
+    "id": "4",
+    "product_name": "Puma Suede",
+    "size": "42",
+    "price": 80
+  }
+]

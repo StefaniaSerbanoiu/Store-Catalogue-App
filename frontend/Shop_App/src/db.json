@@ -1,0 +1,58 @@
+{
+  "shoes": [
+    {
+      "id": "9",
+      "product_name": "Salomon Speedcross",
+      "size": 42,
+      "price": 130
+    },
+    {
+      "id": "12",
+      "product_name": "Mizuno Wave Rider",
+      "size": 38,
+      "price": 105
+    },
+    {
+      "id": "13",
+      "product_name": "ASICS Gel-Kayano",
+      "size": 40,
+      "price": 125
+    },
+    {
+      "id": "14",
+      "product_name": "Hoka One One Bondi",
+      "size": 42,
+      "price": 135
+    },
+    {
+      "id": "15",
+      "product_name": "Merrell Trail Glove",
+      "size": 44,
+      "price": 115
+    },
+    {
+      "id": "16",
+      "product_name": "Timberland Classic",
+      "size": 36,
+      "price": 95
+    },
+    {
+      "id": "17",
+      "product_name": "Dr. Martens 1460",
+      "size": 38,
+      "price": 160
+    },
+    {
+      "id": "18",
+      "product_name": "Timberland Earthkeepers",
+      "size": 40,
+      "price": 120
+    },
+    {
+      "id": "9031",
+      "product_name": "Platforms spring-summer-fall-winter collection 2022-2023",
+      "size": "36",
+      "price": "100"
+    }
+  ]
+}
