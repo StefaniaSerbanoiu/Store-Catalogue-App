@@ -1,1 +1,1 @@
-lab 2 is in backend and frontend folders
+lab 2 and bonus tasks are in backend and frontend folders
