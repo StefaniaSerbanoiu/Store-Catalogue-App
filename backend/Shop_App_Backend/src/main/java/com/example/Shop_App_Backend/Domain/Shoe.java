@@ -1,8 +1,11 @@
 package com.example.Shop_App_Backend.Domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity // for connectivity with database
 @Data // for generated constructors, getters and setters
@@ -33,6 +36,14 @@ public class Shoe {
     @Min(value = 0, message = "Price must be a positive value")
     @Column(name = "price")
     private Integer price;
+
+    // One product can have multiple associated suggestions on how to style it
+    @OneToMany(mappedBy = "shoe", cascade = CascadeType.DETACH)
+    // If we want the cascade operations to be performed on the Shoe entity
+    // (e.g., saving or deleting) and the operations to be cascaded to the associated Suggestion entities as well,
+    // we use the CascadeType.ALL setting.
+    @JsonManagedReference // This annotation is for the "one" side of the relationship
+    private List<Suggestion> suggestions;
 
 
     /*
