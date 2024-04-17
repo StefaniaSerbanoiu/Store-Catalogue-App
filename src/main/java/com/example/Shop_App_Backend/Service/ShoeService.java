@@ -1,6 +1,7 @@
 package com.example.Shop_App_Backend.Service;
 
 import com.example.Shop_App_Backend.Domain.Shoe;
+import com.example.Shop_App_Backend.Domain.Suggestion;
 import com.example.Shop_App_Backend.Repository.ShoeRepository;
 /*
 import com.example.Shop_App_Backend.Domain.Client;
@@ -8,16 +9,21 @@ import com.example.Shop_App_Backend.Domain.Transaction;
 import com.example.Shop_App_Backend.Repository.ShoeRepository;
 import com.example.Shop_App_Backend.Repository.TransactionRepository;
  */
+import com.example.Shop_App_Backend.Repository.SuggestionRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ShoeService {
     private ShoeRepository repository;
+    private SuggestionRepository suggestionRepository;
     //private TransactionRepository transactionRepository;
 
     public Shoe addService(Shoe entity) { return this.repository.save(entity); }
@@ -99,5 +105,33 @@ public class ShoeService {
     {
         return this.repository.findAll().stream().filter(shoe -> shoe.getSize() > givenValue)
                 .collect(Collectors.toList());
+    }
+
+    public Set<Suggestion> getSuggestionsForShoe(Integer shoeId)
+    {
+        Shoe shoe = this.getEntityById(shoeId);
+        if(shoe != null)
+        {
+            List<Suggestion> suggestionList = this.suggestionRepository.findAll();
+            if(!suggestionList.isEmpty())
+            {
+                Set<Suggestion> suggestionForShoe = new HashSet<Suggestion>();
+                for(Suggestion advice : suggestionList)
+                {
+                    if(advice.getShoe().getShoe_id() == shoeId)
+                    {
+                        suggestionForShoe.add(advice);
+                    }
+                }
+                return suggestionForShoe;
+            }
+            return null;
+        }
+        return null;
+    }
+
+    public List<Shoe> getAllSortedByPrice(Sort.Direction direction)  // sorts by price in increasing or decreasing order
+    {
+        return this.repository.findAll(Sort.by(direction, "price"));
     }
 }

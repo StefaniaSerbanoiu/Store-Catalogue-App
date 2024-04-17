@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -47,13 +48,33 @@ public class ShopAppBackendApplicationTests {
 
 		when(shoeService.getAll()).thenReturn(shoeList);
 
-		ResponseEntity<Object> responseEntity = shoeController.getAll();
+		ResponseEntity<Object> responseEntity = shoeController.getAll(null, null);
 
 		assertEquals(shoeList, responseEntity.getBody());
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
 		verify(shoeService, times(1)).getAll();
 	}
+
+	@Test
+	public void testGetAllShoesAscending() {
+		List<Shoe> shoeList = new ArrayList<>();
+		shoeList.add(testShoe);
+
+		// Mocking the getAllSortedByPrice method instead of getAll
+		when(shoeService.getAllSortedByPrice(Sort.Direction.ASC)).thenReturn(shoeList);
+
+		// Calling the controller method with sorting parameters
+		ResponseEntity<Object> responseEntity = shoeController.getAll("price", "asc");
+
+		// Asserting the response
+		assertEquals(shoeList, responseEntity.getBody());
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+		// Verifying that the getAllSortedByPrice method is called with the correct sorting direction
+		verify(shoeService, times(1)).getAllSortedByPrice(Sort.Direction.ASC);
+	}
+
 
 	@Test
 	public void testGetShoeById() {
