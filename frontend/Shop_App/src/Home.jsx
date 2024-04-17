@@ -86,6 +86,30 @@ function Home() {
     return header + '\n' + rows.join('\n');
   };
 
+function sortASCprice() {
+  fetch('http://localhost:8080/shoe/all?sortBy=price&sortOrder=asc') // Make a GET request to the backend API with sorting parameters
+      .then(response => response.json())
+      .then(shoes => { 
+          updateShoeList(shoes); // Update the UI with the sorted shoe list
+      })
+      .catch(error => console.error('Error sorting shoes ascendingly:', error));
+}
+
+function sortDESCprice() {
+  fetch('http://localhost:8080/shoe/all?sortBy=price&sortOrder=desc') // Make a GET request to the backend API with sorting parameters
+      .then(response => response.json())
+      .then(shoes => {
+          updateShoeList(shoes); // Update the UI with the sorted shoe list
+      })
+      .catch(error => console.error('Error sorting shoes descendingly:', error));
+}
+
+function updateShoeList(shoes) {
+  setData(shoes); // Update the shoe list in the state
+  localStorage.setItem('shoeData', JSON.stringify(shoes)); // Also, updating the local storage with the new data
+}
+
+
   return (
     <div className='d-flex flex-column justify-content-center align-items-center center'>
       <h1>List of products</h1>
@@ -94,6 +118,8 @@ function Home() {
           <button onClick={handleBulkDelete} className='btn btn-danger me-2'>Delete Selected</button>
           <button onClick={handleExportCSV} className='btn btn-primary me-2'>Export CSV</button>
           <button onClick={handleExportJSON} className='btn btn-success me-2'>Export JSON</button>
+          <button onClick={sortASCprice} className='btn btn-warning me-2'>ASC price</button>
+          <button onClick={sortDESCprice} className='btn btn-warning me-2'>DESC price</button>
           <Link to="/create" className='btn btn-light'>New +</Link>
         </div>
         <table className='table table-stipend'>
@@ -122,6 +148,7 @@ function Home() {
                 <td>
                   <Link to={`/update/${d.shoe_id}`} className='btn btn-sm btn-primary me-2'>Edit</Link>
                   <button onClick={() => handleDelete(d.shoe_id)} className='btn btn-sm btn-danger me-2'>Delete</button>
+                  <Link to={`/suggestions/${d.shoe_id}`} className='btn btn-sm btn-info'>See style advice</Link>
                   <Link to={`/read/${d.shoe_id}`} className='btn btn-sm btn-info'>More</Link>
                 </td>
               </tr>
