@@ -6,6 +6,7 @@ import Update from '../src/Update';
 import Create from '../src/Create';
 import Read from '../src/Read';
 import { BrowserRouter } from 'react-router-dom';
+import Suggestions from '../src/SuggestionEntity/Suggestions';
 
 
 
@@ -58,6 +59,18 @@ describe('View Component', () => {
       </BrowserRouter>
     );
     const headingElement = screen.getByText('Details');
+    expect(headingElement).not.toBeNull();
+  });
+});
+
+describe('View Component', () => {
+  it('renders without crashing', () => {
+    render(
+      <BrowserRouter>
+        <Suggestions />
+      </BrowserRouter>
+    );
+    const headingElement = screen.getByText('Style advice');
     expect(headingElement).not.toBeNull();
   });
 });

@@ -4,11 +4,14 @@ import Home from './Home';
 import Create from './Create';
 import Update from './Update';
 import Read from './Read';
+import Suggestions from './SuggestionEntity/Suggestions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import io from 'socket.io-client'; // Import socket.io-client library
 import { Client } from "@stomp/stompjs";
 
 import { useState } from 'react';
+import UpdateSuggestion from './SuggestionEntity/UpdateSuggestion';
+import CreateSuggestion from './SuggestionEntity/CreateSuggestion';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -67,6 +70,9 @@ const App = () => {
         <Route path='/create' element={<Create />} />
         <Route path='/update/:id' element={<Update />} />
         <Route path='/read/:id' element={<Read />} />
+        <Route path='/suggestions/:id' element={<Suggestions />} />
+        <Route path='/updateSuggestion/:id' element={<UpdateSuggestion />} />
+        <Route path='/createSuggestion/:id' element={<CreateSuggestion />} />
       </Routes>
     </BrowserRouter>
   );
