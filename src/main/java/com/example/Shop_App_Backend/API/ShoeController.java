@@ -4,11 +4,13 @@ import com.example.Shop_App_Backend.Domain.Client;
 import com.example.Shop_App_Backend.Domain.Shoe;
 import com.example.Shop_App_Backend.Domain.Transaction; */
 import com.example.Shop_App_Backend.Domain.Shoe;
+import com.example.Shop_App_Backend.Domain.Suggestion;
 import com.example.Shop_App_Backend.Service.ShoeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -45,9 +47,32 @@ public class ShoeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAll()
+    public ResponseEntity<Object> getAll(@RequestParam(required = false) String sortBy, @RequestParam(required = false) String sortOrder)
     {
-        List<Shoe> shoes = this.service.getAll();
+        /*
+        localhost:8080/shoe/all
+        localhost:8080/shoe/all?sortBy=price&sortOrder=asc
+        localhost:8080/shoe/all?sortBy=price&sortOrder=desc
+         */
+        List<Shoe> shoes;
+        Sort.Direction direction = Sort.Direction.ASC; // Default to ascending order
+
+        // Check if sortOrder parameter is provided and set direction accordingly
+        if (sortOrder != null && sortOrder.equalsIgnoreCase("desc"))
+        {
+            direction = Sort.Direction.DESC;
+        }
+
+        // Check if sortBy parameter is provided and sort accordingly
+        if (sortBy != null && sortBy.equalsIgnoreCase("price"))  // Sorting by price case
+        {
+            shoes = this.service.getAllSortedByPrice(direction);
+        }
+        else
+        {
+            shoes = this.service.getAll();
+        }
+
         if(shoes.isEmpty())
         {
             // there are no shoes saved in the database
@@ -74,6 +99,30 @@ public class ShoeController {
             String errorMessage = "Shoe with id " + id + " was not found.";
             return this.showMessage(errorMessage, HttpStatus.NOT_FOUND); // 404
         }
+    }
+
+    @GetMapping("/suggestions/{id}")
+    public ResponseEntity<Object> getSuggestionsForShoe(@PathVariable("id") Integer shoeId)
+    {
+        Shoe shoe = this.service.getEntityById(shoeId);
+        if(shoe != null)
+        {
+            // the shoe exists
+            Set<Suggestion> suggestions = this.service.getSuggestionsForShoe(shoeId);
+            if(!suggestions.isEmpty())
+            {
+                return this.showMessage(suggestions, HttpStatus.OK); // 200
+            }
+            else
+            {
+                // the shoe hasn't any style suggestions yet
+                return this.showMessage("There was not any shoe with id " + shoeId + " which " +
+                        "has style advice until now.", HttpStatus.NOT_FOUND); // 404
+            }
+        }
+        // the shoe was not found
+        return this.showMessage("There is no shoe with id " + shoeId + ".", HttpStatus.NOT_FOUND);
+        // 404 status
     }
 
     /*
@@ -184,7 +233,7 @@ public class ShoeController {
         addEntity();
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 15000)
     public void addEntity() {
         Random rand = new Random();
         // Generate random shoe entities
@@ -193,7 +242,8 @@ public class ShoeController {
         Random random = new Random();
 
         String productName = generateRandomName(10); // Generate random 10-letter name
-        int price = random.nextInt(200) + 50; // Random price between 50 and 250
+        int price = 1234; // it could be randomly generated , but I want to be able to delete entities from db easily
+        // price = random.nextInt(200) + 50; // Random price between 50 and 250
         int size = Integer.parseInt(sizes[random.nextInt(sizes.length)]);
 
         // Now you can create a Shoe object with these random values
@@ -218,5 +268,7 @@ public class ShoeController {
         }
         return sb.toString();
     }
+
+
 
 }
