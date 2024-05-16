@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { saveAs } from 'file-saver';
 import { toast } from 'react-toastify'; 
 import useStore from './useStore';
+import useTokenStore from './Stores/useTokenStore';
+import useUserStore from './Stores/useUserStore';
 
 function Home() {
   //const [data, setData] = useState([]);
@@ -12,16 +14,27 @@ function Home() {
   const { data, setData, selectedItems, setSelectedItems, token, username } = useStore();
  // const token = useStore.getState().token; // Get token from store
  // const username = useStore.getState().username; // Get username from store
+    const tokenFromStore = useTokenStore((state) => state.token)
+    const setToken = useTokenStore((state) => state.setToken)
+
+    const usernameFromStore = useUserStore((state) => state.username)
+    const setUsernameFromStore = useUserStore((state) => state.setUsername)
 
 
+    useEffect(() => {
+      console.log("Token from store:", tokenFromStore);
+      console.log("Username from store:", usernameFromStore);
+    }, [tokenFromStore, usernameFromStore]);
  useEffect(() => {
+  console.log("Separate stores");
+  console.log("username from store: ", useUserStore.getState().username)
   console.log("here");
   console.log("Username:", username);
   console.log("Token:", token);
 
-  axios.get(`http://localhost:8080/shoe/get/${username}`, {
+  axios.get(`http://localhost:8080/shoe/get/${usernameFromStore}`, {
     headers: {
-      Authorization: `Bearer ${token}` // Include token in the request headers
+      Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
     }
   })
   .then(response => {
@@ -152,7 +165,7 @@ function updateShoeList(shoes) {
                     onChange={() => handleCheckboxChange(d.shoe_id)}
                   />
                 </td>
-                <td>{d.product_name}</td>
+                <td>{d.productName}</td>
                 <td>{d.size}</td>
                 <td>{d.price}</td>
                 <td>

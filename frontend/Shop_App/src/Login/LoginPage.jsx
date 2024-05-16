@@ -3,6 +3,8 @@ import './LoginPage.css';
 import axios from 'axios';
 import useStore from '../useStore';
 import { useJwt, isExpired, decodeToken } from "react-jwt";
+import useTokenStore from '../Stores/useTokenStore';
+import useUserStore from '../Stores/useUserStore';
 
 
 const LoginPage = () => {
@@ -10,6 +12,12 @@ const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    const tokenFromStore = useTokenStore((state) => state.token)
+    const setToken = useTokenStore((state) => state.setToken)
+
+    const usernameFromStore = useUserStore((state) => state.username)
+    const setUsernameFromStore = useUserStore((state) => state.setUsername)
 
     const handleRegister = async () => {
         try {
@@ -22,7 +30,7 @@ const LoginPage = () => {
                 throw new Error('Error!!! There was a problem with the response from the backend!');
             }
 
-
+            
             const data = await response.data;
             console.log(data); // log response from backend
 
@@ -73,31 +81,42 @@ const LoginPage = () => {
 
             // Extract token from response data
             const token = data.token;
-            console.log("Token:", token);
-            useStore.getState().setToken(token); // Update the token in the store
+            console.log("Token1:", token);
+
+            console.log("initial token from store", tokenFromStore)
+            setToken(token); // Update the token in the store
+            console.log('Token from store after login:', useTokenStore.getState().token);
+            //useStore.getState().setToken(token); // Update the token in the store
+           
             // Access the token from the store and log it to the console
-            console.log("Store");
-            console.log("Token from store:", useStore.getState().getToken());
-            console.log("here");
+            /*
+            console.log("Store1");
+            console.log("Token from store1:", useStore.getState().getToken());
+            console.log("here1");
+            */
 
             // Decode the token using decodeToken function
             const decodedToken = decodeToken(token);
             console.log("Decoded token:", decodedToken);
-            useStore.getState().setToken(token); // Update the token in the store
+            //useStore.getState().setToken(token); // Update the token in the store
             // Access the token from the store and log it to the console
-            console.log("Store");
-            console.log("Token from store:", useStore.getState().getToken());
 
             // Extract the username from the decoded token
             const usernameFromToken = decodedToken.sub;
             console.log("Username from token:", usernameFromToken);
 
+            /*
             useStore.getState().setUsername(usernameFromToken); // Set the username
             console.log("Username from store:", useStore.getState().getUsername()); // Print the username to the console
+            */
 
-            axios.get(`http://localhost:8080/shoe/get/${username}`, {
+            console.log("initial username from store", usernameFromStore)
+            setUsernameFromStore(usernameFromToken); // Update the username in the store
+            console.log('Username from store after login:', useUserStore.getState().username); // Print the username fromm the store to the console
+
+            axios.get(`http://localhost:8080/shoe/get/${usernameFromToken}`, {
     headers: {
-        Authorization: `Bearer ${token}` // Include token in the request headers
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
     }
 })
 .then(response => {
@@ -109,7 +128,7 @@ const LoginPage = () => {
     console.error('Error fetching data:', error);
 });
 
-          //  window.location.href = '/'; 
+           window.location.href = '/'; 
             
         } catch (error) {
             if (error.response != undefined && error.response.status === 401) { 
