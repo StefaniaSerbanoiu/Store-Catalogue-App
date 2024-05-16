@@ -45,6 +45,10 @@ public class Shoe {
     @JsonManagedReference // This annotation is for the "one" side of the relationship
     private List<Suggestion> suggestions;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private User user;
+
 
     /*
     //@Column

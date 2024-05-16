@@ -9,35 +9,45 @@ import useStore from './useStore';
 function Home() {
   //const [data, setData] = useState([]);
   //const [selectedItems, setSelectedItems] = useState([]);
-  const { data, setData, selectedItems, setSelectedItems } = useStore();
+  const { data, setData, selectedItems, setSelectedItems, token, username } = useStore();
+ // const token = useStore.getState().token; // Get token from store
+ // const username = useStore.getState().username; // Get username from store
 
 
-  useEffect(() => {
-    axios.get('http://localhost:8080/shoe/all')
-      .then(response => {
-        // Extract data from the response
-        setData(response.data);
-        // Save data to local storage
-        localStorage.setItem('shoeData', JSON.stringify(response.data));
-        
-        const lastItem = response.data.slice(-1)[0];
-        console.log('Last item from backend:', lastItem);
+ useEffect(() => {
+  console.log("here");
+  console.log("Username:", username);
+  console.log("Token:", token);
 
-        const lastItem2 = JSON.parse(localStorage.getItem('shoeData')).pop();
-        console.log('Last item from local storage:', lastItem2);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        // Retrieve data from local storage if backend call fails
-        const storedData = JSON.parse(localStorage.getItem('shoeData'));
-        
-        if (storedData) {
-          setData(storedData);
-        } else {
-          toast.error('Failed to fetch shoe data');
-        }
-      });
-  }, [setData]);
+  axios.get(`http://localhost:8080/shoe/get/${username}`, {
+    headers: {
+      Authorization: `Bearer ${token}` // Include token in the request headers
+    }
+  })
+  .then(response => {
+    // Extract data from the response
+    setData(response.data);
+    // Save data to local storage
+    localStorage.setItem('shoeData', JSON.stringify(response.data));
+    
+    const lastItem = response.data.slice(-1)[0];
+    console.log('Last item from backend:', lastItem);
+
+    const lastItem2 = JSON.parse(localStorage.getItem('shoeData')).pop();
+    console.log('Last item from local storage:', lastItem2);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    // Retrieve data from local storage if backend call fails
+    const storedData = JSON.parse(localStorage.getItem('shoeData'));
+    
+    if (storedData) {
+      setData(storedData);
+    } else {
+      toast.error('Failed to fetch shoe data');
+    }
+  });
+}, [setData, username, token]);
 
   
 

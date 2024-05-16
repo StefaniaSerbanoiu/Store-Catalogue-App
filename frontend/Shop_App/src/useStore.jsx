@@ -9,6 +9,12 @@ const useStore = create(set => ({
   },
   selectedItems: [],
   setSelectedItems: (newSelectedItems) => set({ selectedItems: newSelectedItems }),
+  token: "", // Add token state variable
+  setToken: (newToken) => set({ token: newToken }), // Add setter function for token
+  getToken: () => set.token, // Corrected getter function
+  username: "", // Add username state variable
+  setUsername: (newUsername) => set({ username: newUsername }), // Add setter function for username
+  getUsername: () => useStore.getState().username, // Add getter function for username
 }));
 
 export default useStore;

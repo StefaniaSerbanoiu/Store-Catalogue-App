@@ -1,7 +1,9 @@
 package com.example.Shop_App_Backend.Service;
 
+import com.example.Shop_App_Backend.DTO.ShoeDTO;
 import com.example.Shop_App_Backend.Domain.Shoe;
 import com.example.Shop_App_Backend.Domain.Suggestion;
+import com.example.Shop_App_Backend.Domain.User;
 import com.example.Shop_App_Backend.Repository.ShoeRepository;
 /*
 import com.example.Shop_App_Backend.Domain.Client;
@@ -10,13 +12,13 @@ import com.example.Shop_App_Backend.Repository.ShoeRepository;
 import com.example.Shop_App_Backend.Repository.TransactionRepository;
  */
 import com.example.Shop_App_Backend.Repository.SuggestionRepository;
+import com.example.Shop_App_Backend.Repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 public class ShoeService {
     private ShoeRepository repository;
     private SuggestionRepository suggestionRepository;
+    private UserRepository userRepository;
+
     //private TransactionRepository transactionRepository;
 
     public Shoe addService(Shoe entity) { return this.repository.save(entity); }
@@ -94,10 +98,16 @@ public class ShoeService {
             //entityForUpdate.setSeason(newEntity.getSeason());
             //entityForUpdate.setRating(newEntity.getRating());
             //entityForUpdate.setQuantity(newEntity.getQuantity());
-            return this.repository.save(entityForUpdate);
+            Optional<User> optionalUser = userRepository.findById(newEntity.getUser().getId());
+            if(optionalUser.isPresent())
+            {
+                return this.repository.save(entityForUpdate);
+            }
         }
         return null;
     }
+
+
 
     //filtering on a numerical field of Shoe class, bigger than a given value
     //filters all shoes which are available in a size bigger than a given value
@@ -133,5 +143,23 @@ public class ShoeService {
     public List<Shoe> getAllSortedByPrice(Sort.Direction direction)  // sorts by price in increasing or decreasing order
     {
         return this.repository.findAll(Sort.by(direction, "price"));
+    }
+
+    public ShoeDTO toShoeDTO(Shoe shoe)
+    {
+        return new ShoeDTO(shoe.getShoe_id(), shoe.getProduct_name(),
+                shoe.getSize(), shoe.getPrice());
+    }
+
+    public List<ShoeDTO> getAllByUserService(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            User foundUser = user.get();
+            List<Shoe> shoes = foundUser.getShoes();
+            return shoes.stream()
+                    .map(this::toShoeDTO)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

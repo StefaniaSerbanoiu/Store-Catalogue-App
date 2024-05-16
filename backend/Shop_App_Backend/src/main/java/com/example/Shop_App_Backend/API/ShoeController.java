@@ -3,8 +3,10 @@ package com.example.Shop_App_Backend.API;
 import com.example.Shop_App_Backend.Domain.Client;
 import com.example.Shop_App_Backend.Domain.Shoe;
 import com.example.Shop_App_Backend.Domain.Transaction; */
+import com.example.Shop_App_Backend.DTO.ShoeDTO;
 import com.example.Shop_App_Backend.Domain.Shoe;
 import com.example.Shop_App_Backend.Domain.Suggestion;
+import com.example.Shop_App_Backend.Repository.UserRepository;
 import com.example.Shop_App_Backend.Service.ShoeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.Set;
 @CrossOrigin(origins = "http://localhost:5173") // Specifying frontend origin
 public class ShoeController {
     private ShoeService service;
+    UserRepository userRepository;
 
     @PostMapping("/add")
     public Shoe add(@Valid @RequestBody Shoe newEntity) { return this.service.addService(newEntity); }
@@ -175,6 +178,25 @@ public class ShoeController {
     }
      */
 
+    @GetMapping("/get/{username}")
+    public ResponseEntity<Object> getShoesByUser(@PathVariable("username") String username)
+    {
+        List<ShoeDTO> shoes = this.service.getAllByUserService(username);
+        if(shoes != null)
+        {
+            if(!shoes.isEmpty())
+            {
+                return this.showMessage(shoes, HttpStatus.OK); // 200
+            }
+            else
+            {
+                return this.showMessage("There weren't any shoes added for this account.", HttpStatus.NOT_FOUND); // 404
+            }
+        }
+        return this.showMessage("There is no username with username " + username + ".", HttpStatus.NOT_FOUND);
+        // 404 status
+    }
+
     @GetMapping("/filter/{valueForFiltering}")
     public ResponseEntity<Object> filter(@PathVariable("valueForFiltering") Integer valueForFiltering)
     {
@@ -252,6 +274,7 @@ public class ShoeController {
         shoe.setProduct_name(productName);
         shoe.setSize(size);
         shoe.setPrice(price);
+        shoe.setUser(userRepository.findById(1).orElse(null));
 
         service.addService(shoe);
     }
@@ -268,6 +291,9 @@ public class ShoeController {
         }
         return sb.toString();
     }
+
+
+
 
 
 

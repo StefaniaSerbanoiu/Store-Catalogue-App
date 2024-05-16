@@ -12,6 +12,7 @@ import { Client } from "@stomp/stompjs";
 import { useState } from 'react';
 import UpdateSuggestion from './SuggestionEntity/UpdateSuggestion';
 import CreateSuggestion from './SuggestionEntity/CreateSuggestion';
+import LoginPage from './Login/LoginPage';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -68,6 +69,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/create' element={<Create />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path='/update/:id' element={<Update />} />
         <Route path='/read/:id' element={<Read />} />
         <Route path='/suggestions/:id' element={<Suggestions />} />
