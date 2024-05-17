@@ -30,31 +30,59 @@ const LoginPage = () => {
                 throw new Error('Error!!! There was a problem with the response from the backend!');
             }
 
-            
             const data = await response.data;
             console.log(data); // log response from backend
 
             // Extract token from response data
             const token = data.token;
-            console.log("Token:", token);
-            useStore.getState().setToken(token); // Update the token in the store
+            console.log("Token1:", token);
+
+            console.log("initial token from store", tokenFromStore)
+            setToken(token); // Update the token in the store
+            console.log('Token from store after login:', useTokenStore.getState().token);
+            //useStore.getState().setToken(token); // Update the token in the store
+           
             // Access the token from the store and log it to the console
-            console.log("Store");
-            console.log("Token from store:", useStore.getState().getToken());
-            console.log("here");
+            /*
+            console.log("Store1");
+            console.log("Token from store1:", useStore.getState().getToken());
+            console.log("here1");
+            */
 
             // Decode the token using decodeToken function
             const decodedToken = decodeToken(token);
             console.log("Decoded token:", decodedToken);
+            //useStore.getState().setToken(token); // Update the token in the store
+            // Access the token from the store and log it to the console
 
             // Extract the username from the decoded token
             const usernameFromToken = decodedToken.sub;
             console.log("Username from token:", usernameFromToken);
 
+            /*
             useStore.getState().setUsername(usernameFromToken); // Set the username
             console.log("Username from store:", useStore.getState().getUsername()); // Print the username to the console
+            */
 
-            window.location.href = '/'; 
+            console.log("initial username from store", usernameFromStore)
+            setUsernameFromStore(usernameFromToken); // Update the username in the store
+            console.log('Username from store after login:', useUserStore.getState().username); // Print the username fromm the store to the console
+
+            axios.get(`http://localhost:8080/shoe/get/${usernameFromToken}`, {
+    headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+    }
+})
+.then(response => {
+    // Handle successful response here
+    console.log('Response:', response.data);
+})
+.catch(error => {
+    // Handle error here
+    console.error('Error fetching data:', error);
+});
+
+           window.location.href = '/'; 
         } catch (error) {
             if (error.response != undefined && error.response.status === 409) { // check for a conflict http response
                 alert("The username or email is already in used!!!"); // show an alert box in case of duplicated username or email

@@ -2,14 +2,13 @@ package com.example.Shop_App_Backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 //@EnableScheduling
-public class ShopAppBackendApplication {
+public class Shop_App_Backend {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShopAppBackendApplication.class, args);
+		SpringApplication.run(Shop_App_Backend.class, args);
 	}
 
 }
