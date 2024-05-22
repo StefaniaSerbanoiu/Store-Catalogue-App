@@ -5,17 +5,28 @@ import { saveAs } from 'file-saver';
 import { toast } from 'react-toastify'; 
 import useStore from '../useStore';
 import { useParams } from 'react-router-dom';
+import useTokenStore from '../Stores/useTokenStore';
+import useUserStore from '../Stores/useUserStore';
 
 function Suggestions() {
   const [data, setData] = useState([]);
   const {id} = useParams(); // from url
-  //const [selectedItems, setSelectedItems] = useState([]);
-  //const { data, setData, selectedItems, setSelectedItems } = useStore();
+
+  const tokenFromStore = useTokenStore((state) => state.token)
+  const setToken = useTokenStore((state) => state.setToken)
+
+  const usernameFromStore = useUserStore((state) => state.username)
+  const setUsernameFromStore = useUserStore((state) => state.setUsername)
 
 
   useEffect(() => {
     console.log('ID from URL:', id); // Add this line to log the value of id
-    axios.get('http://localhost:8080/shoe/suggestions/' + id)
+    axios.get('https://charming-cooperation-production.up.railway.app/shoe/suggestions/' + id, {
+    //axios.get('http://localhost:8080/shoe/suggestions/' + id, {
+      headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+      }
+    })
       .then(result => {
         setData(result.data);
         console.log(result.data)
@@ -24,6 +35,27 @@ function Suggestions() {
         console.error(error);
       });
   }, [id]);
+
+
+  const handleDelete = (id) => {
+    const confirmDeleteMessage = window.confirm("Are you sure you want to delete this tip? Deletion can't be undone.");
+    if (confirmDeleteMessage) {
+      axios.delete(`https://charming-cooperation-production.up.railway.app/suggestion/delete/${id}`, {
+      //axios.delete(`http://localhost:8080/suggestion/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+        }
+      })
+        .then(result => {
+          location.reload();
+          window.confirm("Successful deletion");
+        })
+  
+        .catch(err => {
+          console.error(err);
+        });
+    }
+  }
 
   
   return (
@@ -46,7 +78,7 @@ function Suggestions() {
                 <td>{d.title}</td>
                 <td>{d.advice}</td>
                 <td>
-                  <Link to={`/updateSuggestion/${d.suggestion_id}`} className='btn btn-sm btn-primary me-2'>Edit</Link>
+                  <Link to={`/updateSuggestion/${d.suggestion_id}/${id}`} className='btn btn-sm btn-primary me-2'>Edit</Link>
                   <button onClick={() => handleDelete(d.suggestion_id)} className='btn btn-sm btn-danger me-2'>Delete</button>
                   <Link to={`/read/${id}`} className='btn btn-sm btn-info'>See product details</Link>
                 </td>
@@ -60,19 +92,6 @@ function Suggestions() {
 }
 
 
-const handleDelete = (id) => {
-  const confirmDeleteMessage = window.confirm("Are you sure you want to delete this tip? Deletion can't be undone.");
-  if (confirmDeleteMessage) {
-    axios.delete(`http://localhost:8080/suggestion/delete/${id}`)
-      .then(result => {
-        location.reload();
-        window.confirm("Successful deletion");
-      })
 
-      .catch(err => {
-        console.error(err);
-      });
-  }
-}
 
 export default Suggestions;

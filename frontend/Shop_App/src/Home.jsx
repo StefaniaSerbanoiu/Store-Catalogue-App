@@ -10,8 +10,8 @@ import useUserStore from './Stores/useUserStore';
 
 function Home() {
   //const [data, setData] = useState([]);
-  //const [selectedItems, setSelectedItems] = useState([]);
-  const { data, setData, selectedItems, setSelectedItems, token, username } = useStore();
+  const [selectedItems, setSelectedItems] = useState([]);
+  const { data, setData, token, username } = useStore();
  // const token = useStore.getState().token; // Get token from store
  // const username = useStore.getState().username; // Get username from store
     const tokenFromStore = useTokenStore((state) => state.token)
@@ -22,32 +22,30 @@ function Home() {
 
 
     useEffect(() => {
-      console.log("Token from store:", tokenFromStore);
-      console.log("Username from store:", usernameFromStore);
+      console.log("Token:", tokenFromStore);
+      //console.log("Username from store:", usernameFromStore);
     }, [tokenFromStore, usernameFromStore]);
  useEffect(() => {
-  console.log("Separate stores");
-  console.log("username from store: ", useUserStore.getState().username)
-  console.log("here");
-  console.log("Username:", username);
-  console.log("Token:", token);
+  //console.log("username from store: ", useUserStore.getState().username)
 
-  axios.get(`http://localhost:8080/shoe/get/${usernameFromStore}`, {
+    axios.get(`https://charming-cooperation-production.up.railway.app/shoe/get/${usernameFromStore}`, {
+    //axios.get(`http://localhost:8080/shoe/get/${usernameFromStore}`, {
     headers: {
       Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
     }
   })
   .then(response => {
     // Extract data from the response
+    console.log(response)
     setData(response.data);
     // Save data to local storage
     localStorage.setItem('shoeData', JSON.stringify(response.data));
     
     const lastItem = response.data.slice(-1)[0];
-    console.log('Last item from backend:', lastItem);
+    //console.log('Last item from backend:', lastItem);
 
     const lastItem2 = JSON.parse(localStorage.getItem('shoeData')).pop();
-    console.log('Last item from local storage:', lastItem2);
+    //console.log('Last item from local storage:', lastItem2);
   })
   .catch(error => {
     console.error('Error fetching data:', error);
@@ -62,14 +60,44 @@ function Home() {
   });
 }, [setData, username, token]);
 
+
+
+
+
+
+    const handleDelete = (id) => {
+      const confirmDeleteMessage = window.confirm("Are you sure you want to delete this product? Deletion of products can't be undone.");
+      if (confirmDeleteMessage) {
+         axios.delete(`https://charming-cooperation-production.up.railway.app/shoe/delete/${id}`, {
+         // axios.delete(`http://localhost:8080/shoe/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+          }
+        })
+          .then(result => {
+            location.reload();
+            window.confirm("Product deleted");
+          })
+
+          .catch(err => {
+            console.error(err);
+            // Delete the item with the given id from storedData
+            let storedData = JSON.parse(localStorage.getItem('shoeData')) || [];
+            storedData = storedData.filter(item => item.shoe_id !== id);
+            localStorage.setItem('shoeData', JSON.stringify(storedData));
+            window.confirm("Product deleted (backend is offline, so changes won't remain)");
+            location.reload();
+          });
+      }
+    }
   
 
   const handleCheckboxChange = (id) => {
     setSelectedItems(prevSelectedItems => {
       if (prevSelectedItems.includes(id)) {
-        return prevSelectedItems.filter(itemId => itemId !== id); // remove the item if already selected
+        return prevSelectedItems.filter(itemId => itemId !== id);
       } else {
-        return [...prevSelectedItems, id]; // add the item if not selected
+        return [...prevSelectedItems, id];
       }
     });
   };
@@ -78,16 +106,40 @@ function Home() {
     const confirmDeleteMessage = window.confirm("Are you sure you want to delete the selected products? Deletion of products can't be undone.");
     if (confirmDeleteMessage) {
       // Delete all selected items
-      selectedItems.forEach(id => {
-        axios.delete(`http://localhost:8080/shoe/delete/${id}`)
+      selectedItems.forEach(shoe_id => {
+        axios.delete(`https://charming-cooperation-production.up.railway.app/shoe/delete/${shoe_id}`, {
+        //axios.delete(`http://localhost:8080/shoe/delete/${shoe_id}`, {
+          headers: {
+            Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+          }
+        })
           .then(result => {
-            setData(prevData => prevData.filter(item => item.shoe_id !== id));
+             
           })
           .catch(err => console.log(err));
       });
       setSelectedItems([]); // Clear selected items after deletion
+      setData(prevData => prevData.filter(item => item.shoe_id !== id));
+            window.confirm("Products deleted");
+            location.reload();  
     }
   };
+
+  function log_out() {
+     //axios.post('http://localhost:8080/logout')
+    axios.post('https://charming-cooperation-production.up.railway.app/logout', 
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+          }
+        })
+     
+        .then(result => {
+          console.log(result);
+          navigate(`/login`);
+        })
+        .catch(err => console.log("Error while logging out : ", err));
+  }
 
   const handleExportCSV = () => {
     const selectedData = data.filter(item => selectedItems.includes(item.shoe_id));
@@ -109,23 +161,39 @@ function Home() {
     return header + '\n' + rows.join('\n');
   };
 
-function sortASCprice() {
-  fetch('http://localhost:8080/shoe/all?sortBy=price&sortOrder=asc') // Make a GET request to the backend API with sorting parameters
-      .then(response => response.json())
-      .then(shoes => { 
-          updateShoeList(shoes); // Update the UI with the sorted shoe list
-      })
-      .catch(error => console.error('Error sorting shoes ascendingly:', error));
-}
+  function sortASCprice() {
+    //const url = `http://localhost:8080/shoe/get/${usernameFromStore}?sortBy=price&sortOrder=asc`;
+    const url = `https://charming-cooperation-production.up.railway.app/shoe/get/${usernameFromStore}?sortBy=price&sortOrder=asc`;
+    
+    fetch(url, {
+      headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+      }
+    })
+    .then(response => response.json())
+    .then(shoes => { 
+      updateShoeList(shoes); // Update the UI with the sorted shoe list
+    })
+    .catch(error => console.error('Error sorting shoes ascendingly:', error));
+  }
+  
 
-function sortDESCprice() {
-  fetch('http://localhost:8080/shoe/all?sortBy=price&sortOrder=desc') // Make a GET request to the backend API with sorting parameters
-      .then(response => response.json())
-      .then(shoes => {
-          updateShoeList(shoes); // Update the UI with the sorted shoe list
-      })
-      .catch(error => console.error('Error sorting shoes descendingly:', error));
-}
+  function sortDESCprice() {
+    //const url = `http://localhost:8080/shoe/get/${usernameFromStore}?sortBy=price&sortOrder=desc`;
+    const url = `https://charming-cooperation-production.up.railway.app/shoe/get/${usernameFromStore}?sortBy=price&sortOrder=desc`;
+    
+    fetch(url, {
+      headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+      }
+    })
+    .then(response => response.json())
+    .then(shoes => { 
+      updateShoeList(shoes); // Update the UI with the sorted shoe list
+    })
+    .catch(error => console.error('Error sorting shoes descendingly:', error));
+  }
+  
 
 function updateShoeList(shoes) {
   setData(shoes); // Update the shoe list in the state
@@ -135,7 +203,7 @@ function updateShoeList(shoes) {
 
   return (
     <div className='d-flex flex-column justify-content-center align-items-center center'>
-      <h1>List of products</h1>
+      <h1>List of products of {usernameFromStore}</h1>
       <div className='w=75 rounded border shadow p-4'>
         <div className='d-flex justify-content-end mb-3'>
           <button onClick={handleBulkDelete} className='btn btn-danger me-2'>Delete Selected</button>
@@ -165,7 +233,7 @@ function updateShoeList(shoes) {
                     onChange={() => handleCheckboxChange(d.shoe_id)}
                   />
                 </td>
-                <td>{d.productName}</td>
+                <td>{d.product_name}</td>
                 <td>{d.size}</td>
                 <td>{d.price}</td>
                 <td>
@@ -178,31 +246,13 @@ function updateShoeList(shoes) {
             ))}
           </tbody>
         </table>
+        <Link to={'/login'} className='btn btn-light me-2'>Log out</Link>
       </div>
     </div>
   );
 }
 
 
-const handleDelete = (id) => {
-  const confirmDeleteMessage = window.confirm("Are you sure you want to delete this product? Deletion of products can't be undone.");
-  if (confirmDeleteMessage) {
-    axios.delete(`http://localhost:8080/shoe/delete/${id}`)
-      .then(result => {
-        location.reload();
-        window.confirm("Product deleted");
-      })
 
-      .catch(err => {
-        console.error(err);
-        // Delete the item with the given id from storedData
-        let storedData = JSON.parse(localStorage.getItem('shoeData')) || [];
-        storedData = storedData.filter(item => item.shoe_id !== id);
-        localStorage.setItem('shoeData', JSON.stringify(storedData));
-        window.confirm("Product deleted (backend is offline, so changes won't remain)");
-        location.reload();
-      });
-  }
-}
 
 export default Home;

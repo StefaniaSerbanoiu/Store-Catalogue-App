@@ -21,7 +21,8 @@ const LoginPage = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post("http://localhost:8080/register", {
+            const response = await axios.post("https://charming-cooperation-production.up.railway.app/register", {
+               // const response = await axios.post("http://localhost:8080/register", {
                 username, 
                 password,
             });
@@ -68,7 +69,8 @@ const LoginPage = () => {
             setUsernameFromStore(usernameFromToken); // Update the username in the store
             console.log('Username from store after login:', useUserStore.getState().username); // Print the username fromm the store to the console
 
-            axios.get(`http://localhost:8080/shoe/get/${usernameFromToken}`, {
+        axios.get(`https://charming-cooperation-production.up.railway.app/shoe/get/${usernameFromToken}`, {
+               // axios.get(`http://localhost:8080/shoe/get/${usernameFromToken}`, {
     headers: {
         Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
     }
@@ -93,7 +95,8 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("http://localhost:8080/login", {
+            const response = await axios.post("https://charming-cooperation-production.up.railway.app/login", {
+            // const response = await axios.post("http://localhost:8080/login", {
             username,
             password,
             });
@@ -142,7 +145,8 @@ const LoginPage = () => {
             setUsernameFromStore(usernameFromToken); // Update the username in the store
             console.log('Username from store after login:', useUserStore.getState().username); // Print the username fromm the store to the console
 
-            axios.get(`http://localhost:8080/shoe/get/${usernameFromToken}`, {
+            axios.get(`https://charming-cooperation-production.up.railway.app/shoe/get/${usernameFromToken}`, {
+            //axios.get(`http://localhost:8080/shoe/get/${usernameFromToken}`, {
     headers: {
         Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
     }

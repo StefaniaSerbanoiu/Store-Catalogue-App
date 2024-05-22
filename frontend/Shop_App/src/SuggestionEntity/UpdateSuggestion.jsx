@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import useTokenStore from '../Stores/useTokenStore';
+import useUserStore from '../Stores/useUserStore';
 
 
 function UpdateSuggestion() {
-  const {id} = useParams(); // gets id from url
+  const {shoe_id, id} = useParams(); // gets id from url
+
+  const tokenFromStore = useTokenStore((state) => state.token)
+  const setToken = useTokenStore((state) => state.setToken)
+
+  const usernameFromStore = useUserStore((state) => state.username)
+  const setUsernameFromStore = useUserStore((state) => state.setUsername)
 
   const [values, setValues] = useState({
     title : '',
@@ -18,7 +26,12 @@ function UpdateSuggestion() {
 
   const isServerReachable = async () => {
     try {
-      await axios.get('http://localhost:8080/shoe/all');
+      await axios.get('https://charming-cooperation-production.up.railway.app/shoe/all', {
+      //await axios.get('http://localhost:8080/shoe/all', {
+        headers: {
+          Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+        }
+      });
       return true;
     } catch (error) {
       return false;
@@ -27,7 +40,12 @@ function UpdateSuggestion() {
   
 
   useEffect(() => { // get advice details
-    axios.get('http://localhost:8080/suggestion/' + id)
+    axios.get('https://charming-cooperation-production.up.railway.app/suggestion/' + id, {
+    //axios.get('http://localhost:8080/suggestion/' + id, {
+      headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+      }
+    })
     .then(result  => {
         setValues(result.data);
     })
@@ -45,10 +63,15 @@ const handleUpdate = async (event) => {
     const serverOnline = await isServerReachable();
 
     if (serverOnline) {
-      const result = await axios.put(`http://localhost:8080/suggestion/update/${id}`, values);
+      const result = await axios.put(`https://charming-cooperation-production.up.railway.app/suggestion/update/${id}`, values, {
+      //const result = await axios.put(`http://localhost:8080/suggestion/update/${id}`, values, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+        }
+      });
       console.log(result);
       window.confirm(`"${values.title}" was updated`);
-      navigate("/");
+      window.location.href = '/suggestions/' + shoe_id;
     } 
   } catch (error) {
     console.error(error);
@@ -83,7 +106,7 @@ const handleUpdate = async (event) => {
             
               <div className="d-flex justify-content-between">
               <button  className="btn btn-primary w-50">Save changes</button>
-              <Link to="/" className="btn btn-secondary w-50 ms-3">Back</Link>
+              <Link to={`/suggestions/${shoe_id}`} className="btn btn-secondary w-50 ms-3">Back</Link>
             </div>
           </form>
         </div>

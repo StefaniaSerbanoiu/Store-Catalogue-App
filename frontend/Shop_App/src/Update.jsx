@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import useTokenStore from './Stores/useTokenStore';
+import useUserStore from './Stores/useUserStore';
 
 
 function Update() {
@@ -10,6 +12,12 @@ function Update() {
     price : 0
   })
 
+  const tokenFromStore = useTokenStore((state) => state.token)
+  const setToken = useTokenStore((state) => state.setToken)
+
+  const usernameFromStore = useUserStore((state) => state.username)
+  const setUsernameFromStore = useUserStore((state) => state.setUsername)
+
   const {id} = useParams(); // gets id from url
 
   const [isOnline, setIsOnline] = useState(true);
@@ -17,7 +25,12 @@ function Update() {
 
   const isServerReachable = async () => {
     try {
-      await axios.get('http://localhost:8080/shoe/all');
+      await axios.get('https://charming-cooperation-production.up.railway.app/shoe/all', {
+      //await axios.get('http://localhost:8080/shoe/all', {
+        headers: {
+          Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+        }
+      });
       return true;
     } catch (error) {
       return false;
@@ -25,7 +38,12 @@ function Update() {
   };
   
   useEffect(() => {
-    axios.get('http://localhost:8080/shoe/' + id)
+    axios.get('https://charming-cooperation-production.up.railway.app/shoe/' + id, {
+    //axios.get('http://localhost:8080/shoe/' + id, {
+      headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+      }
+    })
     .then(result  => {
         setValues(result.data);
     })
@@ -51,7 +69,12 @@ const handleUpdate = async (event) => {
     const serverOnline = await isServerReachable();
 
     if (serverOnline) {
-      const result = await axios.put(`http://localhost:8080/shoe/update/${id}`, values);
+      const result = await axios.put(`https://charming-cooperation-production.up.railway.app/shoe/update/${id}`, values, {
+      //const result = await axios.put(`http://localhost:8080/shoe/update/${id}`, values, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+        }
+      });
       console.log(result);
       window.confirm(`${values.product_name} was updated`);
       navigate("/");
@@ -113,9 +136,8 @@ const handleUpdate = async (event) => {
                 min="34" 
                 max="46" 
                 step='2' 
-                required
                 value={values.size} // Ensure the value is controlled by the state
-                onChange={e => setValues({...values, size: parseInt(e.target.value, 10)})}
+                onChange={elem => setValues({...values, size: elem.target.value})}
               />
 
               <small className="form-text text-muted">Size range: 34 - 46</small>

@@ -51,6 +51,7 @@ const App = () => {
     }
   };
 
+  /*
   // Ensure the connection is established on component mount
   useEffect(() => {
     handleConnect();
@@ -63,17 +64,18 @@ const App = () => {
       }
     };
   }, []);
+  */
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/create' element={<Create />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path='/login' element={<LoginPage />} />
         <Route path='/update/:id' element={<Update />} />
         <Route path='/read/:id' element={<Read />} />
         <Route path='/suggestions/:id' element={<Suggestions />} />
-        <Route path='/updateSuggestion/:id' element={<UpdateSuggestion />} />
+        <Route path='/updateSuggestion/:id/:shoe_id' element={<UpdateSuggestion />} />
         <Route path='/createSuggestion/:id' element={<CreateSuggestion />} />
       </Routes>
     </BrowserRouter>

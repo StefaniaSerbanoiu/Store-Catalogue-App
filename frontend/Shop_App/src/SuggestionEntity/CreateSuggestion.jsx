@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import useTokenStore from '../Stores/useTokenStore';
+import useUserStore from '../Stores/useUserStore';
 
 function CreateSuggestion() {
     const {id} = useParams(); // gets id from url
@@ -13,9 +15,21 @@ function CreateSuggestion() {
   const [isOnline, setIsOnline] = useState(true);
   const navigate = useNavigate();
 
+  const tokenFromStore = useTokenStore((state) => state.token)
+  const setToken = useTokenStore((state) => state.setToken)
+
+  const usernameFromStore = useUserStore((state) => state.username)
+  const setUsernameFromStore = useUserStore((state) => state.setUsername)
+
+
   const isServerReachable = async () => {
     try {
-      await axios.get('http://localhost:8080/shoe/all');
+      await axios.get('https://charming-cooperation-production.up.railway.app/shoe/all', {
+      //await axios.get('http://localhost:8080/shoe/all', {
+        headers: {
+          Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+        }
+      });
       return true;
     } catch (error) {
       if (error instanceof Error) { 
@@ -34,7 +48,12 @@ function CreateSuggestion() {
     setIsOnline(serverOnline);
 
     if (serverOnline) {
-    axios.post('http://localhost:8080/suggestion/add/' + id, values)
+    axios.post('https://charming-cooperation-production.up.railway.app/suggestion/add/' + id, values, {
+    //axios.post('http://localhost:8080/suggestion/add/' + id, values, {
+      headers: {
+        Authorization: `Bearer ${tokenFromStore}` // Include token in the request headers
+      }
+    })
       .then(result => {
         console.log(result); console.log(values);
         window.confirm('New product added'); // Show success notification
